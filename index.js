@@ -1,7 +1,7 @@
 const maxDays = 30;
 
-async function genReportLog(container, key, url, type, level) {
-  const response = await fetch("logs/" + key + "_report.log");
+async function genReportLog(container, key, url, type, level, code_name) {
+  const response = await fetch("logs/" + code_name + "_report.log");
   let statusLines = "";
   if (response.ok) {
     statusLines = await response.text();
@@ -244,11 +244,11 @@ async function genAllReports() {
   const configLines = configText.split("\n");
   for (let ii = 0; ii < configLines.length; ii++) {
     const configLine = configLines[ii];
-    const [key, url, type, level] = configLine.split("=");
+    const [key, url, type, level, code_name] = configLine.split("=");
     if (!key || !url) {
       continue;
     }
 
-    await genReportLog(document.getElementById("reports"), key, url, type, level);
+    await genReportLog(document.getElementById("reports"), key, url, type, level, code_name);
   }
 }
