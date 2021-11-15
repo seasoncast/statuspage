@@ -1,6 +1,6 @@
 const maxDays = 30;
 
-async function genReportLog(container, key, url) {
+async function genReportLog(container, key, url, type, level) {
   const response = await fetch("logs/" + key + "_report.log");
   let statusLines = "";
   if (response.ok) {
@@ -8,11 +8,11 @@ async function genReportLog(container, key, url) {
   }
 
   const normalized = normalizeData(statusLines);
-  const statusStream = constructStatusStream(key, url, normalized);
+  const statusStream = constructStatusStream(key, url, normalized, type, level);
   container.appendChild(statusStream);
 }
 
-function constructStatusStream(key, url, uptimeData) {
+function constructStatusStream(key, url, uptimeData, type, level) {
   let streamContainer = templatize("statusStreamContainerTemplate");
   for (var ii = maxDays - 1; ii >= 0; ii--) {
     let line = constructStatusLine(key, ii, uptimeData[ii]);
@@ -25,6 +25,8 @@ function constructStatusStream(key, url, uptimeData) {
   const container = templatize("statusContainerTemplate", {
     title: key,
     url: url,
+    type,
+    level,
     color: color,
     status: getStatusText(color),
     upTime: uptimeData.upTime,
@@ -242,11 +244,11 @@ async function genAllReports() {
   const configLines = configText.split("\n");
   for (let ii = 0; ii < configLines.length; ii++) {
     const configLine = configLines[ii];
-    const [key, url] = configLine.split("=");
+    const [key, url, type, level] = configLine.split("=");
     if (!key || !url) {
       continue;
     }
 
-    await genReportLog(document.getElementById("reports"), key, url);
+    await genReportLog(document.getElementById("reports"), key, url, type, level);
   }
 }
