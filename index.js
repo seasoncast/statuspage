@@ -57,11 +57,11 @@ function constructStatusSquare(key, date, uptimeVal) {
   const color = getColor(uptimeVal);
   let square = templatize("statusSquareTemplate", {
     color: color,
-    tooltip: getTooltip(key, date, color),
+    tooltip: getTooltip(key, date, color, uptimeVal * 100),
   });
 
   const show = () => {
-    showTooltip(square, key, date, color);
+    showTooltip(square, key, date, color, uptimeVal * 100);
   };
   square.addEventListener("mouseover", show);
   square.addEventListener("mousedown", show);
@@ -132,9 +132,9 @@ function getStatusDescriptiveText(color) {
     : "Unknown";
 }
 
-function getTooltip(key, date, quartile, color) {
+function getTooltip(key, date, quartile, color, percent) {
   let statusText = getStatusText(color);
-  return `${key} | ${date.toDateString()} : ${quartile} : ${statusText}`;
+  return `${key} | ${date.toDateString()} : ${quartile} : ${statusText} : ${percent}%`;
 }
 
 function create(tag, className) {
@@ -213,13 +213,13 @@ function splitRowsByDate(rows) {
 }
 
 let tooltipTimeout = null;
-function showTooltip(element, key, date, color) {
+function showTooltip(element, key, date, color, percent) {
   clearTimeout(tooltipTimeout);
   const toolTipDiv = document.getElementById("tooltip");
 
   document.getElementById("tooltipDateTime").innerText = date.toDateString();
-  document.getElementById("tooltipDescription").innerText =
-    getStatusDescriptiveText(color);
+  document.getElementById("tooltipDescription").innerHTML =
+    getStatusDescriptiveText(color) + "<br /> " + Math.floor(percent) + "%";
 
   const statusDiv = document.getElementById("tooltipStatus");
   statusDiv.innerText = getStatusText(color);
