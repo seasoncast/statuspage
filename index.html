@@ -9,8 +9,13 @@
     <div class="pageContainer">
       <div class="headline">
         <img src="logo.svg" alt="Logo" width="200px" />
-        <span> System Status </span>
+        <span> System Status </span><br />
+     
       </div>
+      <div>
+        <br />
+      SeasonCast infrastructure is built with redundancy in mind. The system is designed to be 100% functional with 3/4 ingest locations failing, 2/3 API locations failing. We use a combination of load balancing and failover to ensure that the system is always available. We use different locations and server providers to prevent one source of failover. While ingest locations may & do fail, the SeasonCast app will always failover to different locations regardless of users location. This means a complete outage of SeasonCast would require ether all ingest locations to fail or all API locations to fail. We are commited to providing a reliable service to all of our users.
+        </div>
       <div id="reports" class="reportContainer"></div>
       <div id="tooltip" class="tooltip" style="opacity: 0">
         <div id="tooltipArrow" class="tooltipArrow"></div>
@@ -37,9 +42,20 @@
           </div>
           <div class="statusSubtitle">
             <div class="sectionUrl">Type: $type-$level</div>
-            <div class="statusUptime">$upTime in the last 30 days</div>
+            <div class="statusUptime">$upTime in the last 90 days</div>
           </div>
         </div>
+        <!-- reported health template -->
+        <div id="reportedHealthTemplate" class="reportedHealth">
+          <br />
+          <hr />
+          <div class="reportedHealthTitle"><br />
+            <div class="reportedHealthTitleText">Your Devices Connection:</div>
+            <!-- <div class="$color statusHeadline">$status</div><br /> -->
+            <div class="reportedHealthCanConnect">Ping: <b>$time ms</b> 
+             </div>
+          </div>
+    
       </div>
     </div>
     <footer>

@@ -150,19 +150,19 @@ footer a {
 }
 
 .statusStreamContainer {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(30, 1fr);
+  grid-auto-rows: 20px;
+  grid-gap: 0.1em;
 }
 
 .statusSquare {
   border-radius: 3px;
-  height: 30px;
-  min-width: 8px;
-  width: 100%;
+  grid-column: span 1;
+
 }
 
 .statusSquare + .statusSquare {
-  margin-left: 6px;
 }
 
 .sectionUrl {
@@ -206,6 +206,7 @@ footer a {
 .uptimeContainer {
   color: #999;
   display: flex;
+  
   margin-top: 8px;
   font-size: 12px;
 }

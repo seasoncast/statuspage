@@ -1,4 +1,4 @@
-const maxDays = 30;
+const maxDays = 90;
 
 async function genReportLog(container, key, url, type, level, code_name) {
   const response = await fetch("logs/" + code_name + "_report.log");
@@ -8,11 +8,11 @@ async function genReportLog(container, key, url, type, level, code_name) {
   }
 
   const normalized = normalizeData(statusLines);
-  const statusStream = constructStatusStream(key, url, normalized, type, level);
+  const statusStream = await constructStatusStream(key, url, normalized, type, level);
   container.appendChild(statusStream);
 }
 
-function constructStatusStream(key, url, uptimeData, type, level) {
+async function constructStatusStream(key, url, uptimeData, type, level) {
   let streamContainer = templatize("statusStreamContainerTemplate");
   for (var ii = maxDays - 1; ii >= 0; ii--) {
     let line = constructStatusLine(key, ii, uptimeData[ii]);
@@ -32,9 +32,56 @@ function constructStatusStream(key, url, uptimeData, type, level) {
     upTime: uptimeData.upTime,
   });
 
+
+
   container.appendChild(streamContainer);
+
+//   if (type == "INGEST") {
+//     var success = false
+//     var result = await pingServer(url);
+    
+//     console.log(result);
+//   const reportedHealthContainer = templatize("reportedHealthTemplate", {
+//     canConnect: true,
+//     color: getColor(1),
+//     status: success ? "No issues on your device to this server" : "Device may have firewall issues",
+//     ...result  
+//   });
+//   console.log(reportedHealthContainer)
+//   container.appendChild(reportedHealthContainer);
+// }
   return container;
 }
+
+async function pingServer(URL){
+  var started = new Date().getTime();
+  var timeout = 5000;
+
+  var result = await fetch(URL);
+  var ended = new Date().getTime();
+  var timeTaken = ended - started;
+  var resultJSON = {}
+  try{
+  if (result.ok) {
+     resultJSON = await result.json()
+    return {
+      return: true,
+      ...resultJSON,
+      canTakeBroadcast: (!resultJSON.speed) ? "Yes" : (resultJSON.speed.canTakeBroadcast ? "Yes" : "No"),
+      time: timeTaken,
+    };
+  } 
+}catch(e) {}
+    return {
+      return: false,
+      canTakeBroadcast: "No",
+      time: timeTaken,
+      raw: resultJSON,
+      url: URL
+    };
+  
+}
+
 
 function constructStatusLine(key, relDay, upTimeArray) {
   let date = new Date();
@@ -117,6 +164,8 @@ function getStatusText(color) {
     ? "Major Outage"
     : color == "partial"
     ? "Partial Outage"
+    : color == "recover"
+    ? "Operational"
     : "Unknown";
 }
 
